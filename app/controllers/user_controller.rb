@@ -4,6 +4,7 @@ class UserController < ApplicationController
 
   def all
     @users = User.all
+
     render json: @users
   end
 
@@ -11,26 +12,24 @@ class UserController < ApplicationController
     render json: @user, status: :ok
   end
 
-  def new
+  def create
     @user = User.new(user_params)
-
-    return render json: { error: "Email already exists" }, status: :unprocessable_entity if User.exists?(email: @user.email)
 
     return render json: @user, status: :created if @user.save
 
-    render json: @user.errors, status: :unprocessable_entity
+    render json: @user.errors, status: :bad_request
   end
 
   def update
     return render json: @user if @user.update(user_params)
 
-    render json: @user.error, status: :bad_request
+    render json: @user.errors, status: :bad_request
   end
 
   def destroy
-    return render json: { message: 'User deleted'} if @user.delete
+    return render json: { message: "User deleted" } if @user.delete
 
-    render json: @user.erro, status: :bad_request
+    render json: @user.errors, status: :bad_request
   end
 
   private
